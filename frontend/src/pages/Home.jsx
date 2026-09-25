@@ -18,7 +18,7 @@ function Home() {
                 <div className="hero-content">
 
                     <p className="hero-label">
-                        WELCOME TO MU LEAGUE
+                        WELCOME TO MUSU LEAGUE
                     </p>
 
                     <h1>

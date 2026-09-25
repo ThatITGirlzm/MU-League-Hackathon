@@ -1,8 +1,10 @@
-# app/main.py
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app.core.config import settings
-from app.db.mongodb import connect_to_mongo, close_mongo_connection, get_database
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.v1.router import api_router
+from app.db.mongodb import close_mongo_connection, connect_to_mongo
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -10,18 +12,21 @@ async def lifespan(app: FastAPI):
     yield
     await close_mongo_connection()
 
-app = FastAPI(
-    title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    lifespan=lifespan
+
+app = FastAPI(title="MU League API", lifespan=lifespan)
+
+# Allow requests from Vite frontend
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-@app.get("/")
-async def root():
-    db = get_database()
-    # Insert a dummy record into a collection called "test_collection"
-    result = await db["test_collection"].insert_one({"status": "active", "source": "FastAPI"})
-    return {
-        "message": "Connected!",
-        "inserted_id": str(result.inserted_id)
-    }
+app.include_router(api_router, prefix="/api/v1")

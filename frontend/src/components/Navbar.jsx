@@ -15,7 +15,7 @@ function Navbar() {
 
                 <Link to="/" className="logo">
                     <Trophy size={30} />
-                    <span>MU <span>LEAGUE</span></span>
+                    <span>MUSU <span>LEAGUE</span></span>
                 </Link>
 
                 <nav>
